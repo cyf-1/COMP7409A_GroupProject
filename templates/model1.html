@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model 1: Stock Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+        }
+        input {
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        .result img {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stock Prediction using Model 1 (Support Vector Regression)</h1>
+        <form id="prediction-form">
+            <label for="ticker">Stock Ticker</label>
+            <input type="text" id="ticker" name="ticker" required>
+            <label for="start_date">Start Date</label>
+            <input type="date" id="start_date" name="start_date" required>
+            <label for="end_date">End Date</label>
+            <input type="date" id="end_date" name="end_date" required>
+            <button type="submit">Predict</button>
+        </form>
+        <div class="result" id="result">
+            <h2>Prediction Results</h2>
+            <p><strong>MSE:</strong> <span id="mse"></span></p>
+            <p><strong>MAE:</strong> <span id="mae"></span></p>
+            <p><strong>R^2 Score:</strong> <span id="r2"></span></p>
+            <div id="prediction-plot-container">
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch('/predict_SVM', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('mse').textContent = data.mse;
+                document.getElementById('mae').textContent = data.mae;
+                document.getElementById('r2').textContent = data.r2;
+                // 动态插入预测图像
+                const plotContainer = document.getElementById('prediction-plot-container');
+                plotContainer.innerHTML = `<img src="${data.plot_url}" alt="Prediction Plot">`;
+            });
+        });
+    </script>
+    <a href="/" style="text-decoration: none; padding: 10px 20px; background-color: #28a745; color: white; font-size: 16px; border-radius: 5px; margin-bottom: 20px; display: inline-block;">
+        Back to Main Page
+    </a>
+</body>
+</html>
